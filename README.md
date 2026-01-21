@@ -5,7 +5,7 @@ utilizando Python e SQL, simulando um cenário comum em ambientes corporativos
 orientados a dados.
 
 O objetivo é consolidar dados de origem estruturada em uma base padronizada,
-permitindo análises confiáveis e automatizadas.
+permitindo análises confiáveis, automatizadas e reproduzíveis.
 
 ---
 
@@ -16,6 +16,9 @@ diferentes fontes e formatos. Processos manuais de consolidação aumentam o ris
 de erros, retrabalho e inconsistência nos dados utilizados para análise e tomada
 de decisão.
 
+Pipelines ETL são fundamentais para garantir que os dados estejam organizados,
+confiáveis e prontos para consumo analítico.
+
 ---
 
 ## Problema
@@ -24,7 +27,8 @@ Havia a necessidade de extrair dados de uma fonte estruturada, aplicar
 transformações e regras de padronização, e carregar os dados tratados em uma base
 final preparada para análises posteriores.
 
-O processo precisava ser reproduzível, organizado e de fácil manutenção.
+O processo precisava ser automatizado, organizado e de fácil manutenção,
+simulando um fluxo real de Engenharia de Dados.
 
 ---
 
@@ -66,10 +70,13 @@ Este pipeline permite:
 
 ```text
 etl-pipeline-python/
-├── extract/        # Scripts de extração
-├── transform/      # Scripts de transformação e limpeza
-├── load/           # Scripts de carga dos dados
-├── run_etl.py      # Script principal de execução do pipeline
+├── data/                # Dados de entrada e/ou saída do pipeline
+├── src/                 # Código-fonte do pipeline ETL
+│   ├── extract/         # Lógica de extração dos dados
+│   ├── transform/       # Transformação e limpeza dos dados
+│   └── load/            # Carga dos dados tratados
+├── requirements.txt     # Dependências do projeto
+├── run_etl.py           # Script principal de execução do pipeline
 └── README.md
 
 # COMO EXECUTAR O PROJETO
@@ -90,6 +97,14 @@ pip install -r requirements.txt
 
 # 5. Execute o pipeline
 python run_etl.py
+
+# EXEMPLO DE SAÍDA ESPERADA
+
+INFO: Iniciando pipeline ETL
+INFO: Extração concluída com sucesso
+INFO: Transformações aplicadas
+INFO: Dados carregados com sucesso
+INFO: Pipeline finalizado
 ```
 
 ---
@@ -101,7 +116,7 @@ Este projeto pode ser evoluído para um ambiente de produção com:
 - Orquestração do pipeline utilizando Airflow ou Prefect
 - Containerização com Docker
 - Monitoramento de falhas e reprocessamento automático
-- Testes automatizados para validação dos dados
+- Testes automatizados para validação da qualidade dos dados
 - Integração com ambientes de cloud (AWS, GCP ou Azure)
 
 ---
@@ -109,5 +124,5 @@ Este projeto pode ser evoluído para um ambiente de produção com:
 ## Observações
 
 Este projeto foi desenvolvido com foco educacional e demonstrativo, buscando
-representar desafios reais encontrados em pipelines de dados corporativos e
-boas práticas iniciais de Engenharia de Dados.
+representar desafios reais encontrados em pipelines de dados corporativos e boas
+práticas iniciais de Engenharia de Dados.
