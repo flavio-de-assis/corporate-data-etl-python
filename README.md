@@ -2,132 +2,85 @@
 
 ## 📌 Contexto do Negócio
 
-Em ambientes corporativos, dados costumam estar distribuídos em múltiplas fontes e formatos, o que dificulta análises confiáveis e a geração de informações para tomada de decisão.
+Dados exportados de sistemas ERP raramente chegam prontos para análise: nomes de colunas inconsistentes, acentuação misturada, datas em formatos diferentes, campos vazios e registros incompletos.
 
-Processos manuais ou pipelines mal estruturados podem gerar retrabalho, inconsistências e perda de rastreabilidade dos dados. Por isso, pipelines ETL bem definidos são fundamentais para garantir qualidade, padronização e confiabilidade das informações.
-
-Este projeto simula um **pipeline ETL corporativo**, utilizando Python e SQL, refletindo cenários reais encontrados em times de dados e engenharia.
+Este projeto trata uma base de vendas no formato de um ERP real, levando o dado da camada **bruta** (`raw`) para a camada **tratada** (`processed`), pronta para análises, relatórios ou carga em banco.
 
 ---
 
-## 🎯 Objetivo do Projeto
+## 🎯 O que o pipeline faz
 
-O objetivo deste projeto é construir um pipeline ETL capaz de:
+O script `src/main.py` executa, em sequência:
 
-- Extrair dados de uma fonte estruturada
-- Aplicar transformações e validações nos dados
-- Carregar os dados tratados em um banco de dados relacional
-- Garantir organização, clareza e reprodutibilidade do processo
+1. **Extração:** lê o CSV bruto de `data/raw/vendas_raw.csv` (separador `;`) e interrompe a execução com erro claro se o arquivo não existir.
+2. **Padronização das colunas:** nomes em minúsculas, sem espaços, sem acentos e só com letras, números e `_`.
+3. **Limpeza de texto:** remove espaços nas pontas e converte para minúsculas, preservando os nulos.
+4. **Tipagem de datas:** converte `dtvenda`, `dtestorno`, `dtaltera` e `criacaofinalizada` para data; valores inválidos viram nulo (`errors="coerce"`) em vez de quebrar o processo.
+5. **Registros essenciais:** descarta linhas sem `cdvenda`, `cdcliente` ou `dtvenda`.
+6. **Nulos com regra de negócio:** valores monetários ausentes viram `0`; observações ausentes viram `nao_informado`.
+7. **Colunas vazias:** remove as colunas sem nenhum valor preenchido.
+8. **Gravação:** salva o resultado em `data/processed/vendas_tratadas.csv` e exibe um resumo (`head`, `info` e lista de colunas) para conferência.
 
-O projeto representa uma base sólida para análises posteriores, relatórios ou integrações com ferramentas analíticas.
-
----
-
-## 🧠 Solução e Decisões Técnicas
-
-A solução foi desenvolvida seguindo boas práticas de engenharia de dados, com foco em clareza, manutenção e escalabilidade.
-
-Principais decisões técnicas adotadas:
-
-- Separação lógica das etapas de Extração, Transformação e Carga (ETL)
-- Uso de Python para orquestrar o fluxo e realizar transformações
-- Aplicação de validações simples para garantir qualidade dos dados
-- Estrutura organizada para facilitar leitura e evolução do projeto
-- Código escrito de forma legível, simulando padrões corporativos
-
-Essa abordagem reflete práticas comuns em pipelines de dados utilizados em ambientes empresariais.
+**Resultado:** a base passa de **76 para 38 colunas** úteis, com tipos e textos padronizados.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Tecnologias
 
-- Python
-- SQL
-- Conceitos de ETL (Extract, Transform, Load)
-- Banco de dados relacional
-- Manipulação e validação de dados
+- Python 3
+- pandas
+- `pathlib`, `unicodedata` e `re` (biblioteca padrão)
 
 ---
 
 ## 📁 Estrutura do Projeto
 
-corporate-data-etl-python/  
-├── data/  
-├── src/  
-│   ├── extract.py  
-│   ├── transform.py  
-│   ├── load.py  
-├── main.py  
-└── README.md  
-
-- data/: dados de entrada ou arquivos de apoio  
-- extract.py: etapa de extração dos dados  
-- transform.py: etapa de transformação e validação  
-- load.py: etapa de carga dos dados no banco  
-- main.py: orquestração do pipeline ETL  
-- README.md: documentação do projeto  
+```
+corporate-data-etl-python/
+├── data/
+│   ├── raw/
+│   │   └── vendas_raw.csv          # dado bruto, como sai do ERP
+│   └── processed/
+│       └── vendas_tratadas.csv     # dado tratado gerado pelo pipeline
+├── src/
+│   └── main.py                     # pipeline completo (extração, tratamento e gravação)
+├── requirements.txt
+└── README.md
+```
 
 ---
 
-## 🔄 Fluxo do Pipeline ETL
+## ⚙️ Como Executar
 
-O pipeline segue o seguinte fluxo lógico:
+Na raiz do projeto:
 
-1. Extração dos dados a partir da fonte definida
-2. Transformação dos dados (limpeza, padronização e validações)
-3. Carga dos dados tratados no banco de dados relacional
-4. Finalização do processo com logs de execução
+```bash
+python -m venv .venv
+.venv\Scripts\activate          # no Linux/macOS: source .venv/bin/activate
+pip install -r requirements.txt
+python src/main.py
+```
 
-Esse fluxo garante que apenas dados consistentes sejam disponibilizados para consumo analítico.
-
----
-
-## 📊 Resultado e Impacto
-
-Ao executar o pipeline, o resultado esperado é:
-
-- Dados extraídos de forma padronizada
-- Transformações aplicadas conforme regras definidas
-- Dados carregados com sucesso no banco de destino
-- Processo repetível e fácil de manter
-
-Esse tipo de pipeline reduz erros manuais, melhora a confiabilidade das informações e prepara os dados para análises futuras.
-
----
-
-## ⚙️ Como Executar o Projeto
-
-1. Certifique-se de ter o Python instalado
-2. Configure o ambiente virtual, se desejar
-3. Ajuste as configurações de conexão com o banco de dados, se necessário
-4. Execute o arquivo principal do pipeline
-5. Acompanhe a execução e os logs gerados
-
-O pipeline pode ser facilmente adaptado para diferentes fontes de dados ou bancos relacionais.
+O arquivo tratado é gravado em `data/processed/vendas_tratadas.csv`.
 
 ---
 
 ## 🧠 Aprendizados
 
-Com este projeto é possível demonstrar:
-
-- Entendimento do processo ETL em ambientes corporativos
-- Uso de Python para automação de pipelines de dados
-- Organização de código voltada para manutenção
-- Aplicação de conceitos de qualidade e consistência de dados
-- Pensamento estruturado em engenharia de dados
+- Separar o dado bruto do dado tratado em camadas (`raw` → `processed`).
+- Tratar datas inválidas sem interromper o pipeline.
+- Definir regras explícitas para nulos conforme o significado de cada campo.
+- Padronizar nomes de colunas para facilitar o uso em SQL e em ferramentas de BI.
 
 ---
 
 ## 🚀 Próximos Passos
 
-Possíveis evoluções deste projeto incluem:
-
-- Implementação de logs mais detalhados
-- Criação de testes para validação dos dados
-- Parametrização das fontes e destinos
-- Integração com agendadores de tarefas
-- Versionamento de schemas e controle de erros
+- Separar as etapas em módulos (`extract.py`, `transform.py`, `load.py`).
+- Carregar o resultado em um banco relacional (PostgreSQL) em vez de CSV.
+- Trocar os `print` por logs com a contagem de linhas descartadas em cada etapa.
+- Criar testes automatizados para as regras de tratamento.
+- Agendar a execução com um orquestrador.
 
 ---
 
