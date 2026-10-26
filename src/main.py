@@ -104,10 +104,11 @@ colunas_data = [
 ]
 
 # Conversão segura para datetime
+# As datas do ERP vêm no padrão brasileiro (dd/mm/aaaa), por isso dayfirst=True
 # Valores inválidos são convertidos para NaT
 for col in colunas_data:
     if col in df.columns:
-        df[col] = pd.to_datetime(df[col], errors="coerce")
+        df[col] = pd.to_datetime(df[col], errors="coerce", dayfirst=True)
 
 
 # ============================
